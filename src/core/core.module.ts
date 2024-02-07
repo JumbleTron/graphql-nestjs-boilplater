@@ -3,6 +3,7 @@ import { PlansModule } from '../plans/plans.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { join } from 'path';
       introspection: true,
       playground: true,
     }),
+    MongooseModule.forRoot('mongodb://localhost/nestjs'),
     PlansModule,
   ],
   controllers: [],

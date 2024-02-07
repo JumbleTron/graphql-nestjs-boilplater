@@ -3,10 +3,16 @@ import { Country } from '../models/country.model';
 import { Network } from '../models/network.model';
 import { v4 as uuid } from 'uuid';
 import { randomMnc } from '../../core/utils/randomNumber';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CountriesService {
   private networks: Map<string, Network> = new Map();
+
+  constructor(
+    @InjectModel(Country.name) private countryModel: Model<Country>,
+  ) {}
 
   getCountriesForPlanDefinition(id: string): Country[] {
     const country = new Country();
@@ -18,7 +24,10 @@ export class CountriesService {
     return [country];
   }
 
-  getNetworksForCountry(id: string): Network[] {
+  async getNetworksForCountry(id: string): Promise<Network[]> {
+    const country = await this.countryModel.findById(id).exec();
+    console.log(country);
+
     this.networks.clear();
     this.init(id);
     return Array.from(this.networks, ([, value]) => value);
