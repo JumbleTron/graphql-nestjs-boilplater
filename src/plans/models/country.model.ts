@@ -1,15 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from 'mongoose';
+import { PlanDefinition } from './plan-definition.model';
+import { Network } from "./network.model";
 
 export type CountryDocument = HydratedDocument<Country>;
 
 @ObjectType()
 @Schema()
 export class Country {
-  @Prop({ required: true })
-  _id: string;
-
   @Field(() => ID)
   id: string;
 
@@ -24,5 +23,11 @@ export class Country {
   @Field()
   @Prop({ required: true })
   isoAlpha3: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'PlanDefinition' })
+  planDefinition: PlanDefinition;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Network' }] })
+  networks: Network[];
 }
 export const CountrySchema = SchemaFactory.createForClass(Country);

@@ -20,7 +20,7 @@ export class PlanDefinitionResolver {
 
   @Query(() => [PlanDefinition])
   async planDefinitions() {
-    return this.planDefinitionService.getList();
+    return await this.planDefinitionService.getList();
   }
 
   @Query(() => PlanDefinition)

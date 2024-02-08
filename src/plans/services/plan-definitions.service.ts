@@ -1,37 +1,20 @@
 import { PlanDefinition } from '../models/plan-definition.model';
-import { v4 as uuid } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { randomPrice, randomUsage } from "../../core/utils/randomNumber";
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PlanDefinitionsService {
-  private planDefinitions: Map<string, PlanDefinition> = new Map();
+  constructor(
+    @InjectModel(PlanDefinition.name)
+    private planDefinitionModel: Model<PlanDefinition>,
+  ) {}
 
-  constructor() {
-    this.init();
+  async getList(): Promise<PlanDefinition[]> {
+    return await this.planDefinitionModel.find().exec();
   }
 
-  getList(): PlanDefinition[] {
-    return Array.from(this.planDefinitions, ([, value]) => value);
-  }
-
-  getById(id: string): PlanDefinition | null {
-    if (!this.planDefinitions.has(id)) {
-      return null;
-    }
-
-    return this.planDefinitions.get(id);
-  }
-
-  private init(): void {
-    for (let i = 0; i < 10; ) {
-      const planDefinition = new PlanDefinition();
-      planDefinition.id = uuid();
-      planDefinition.name = `Plan definition ${++i}`;
-      planDefinition.price = randomPrice();
-      planDefinition.dataAmount = randomUsage()
-
-      this.planDefinitions.set(planDefinition.id, planDefinition);
-    }
+  async getById(id: string): Promise<PlanDefinition | null> {
+    return await this.planDefinitionModel.findById(id).exec();
   }
 }
